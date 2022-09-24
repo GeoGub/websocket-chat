@@ -21,3 +21,6 @@ class Params(BaseModel):
 
 class Meta(Params):
     total: int
+
+class BadRequest(CamalModel):
+    detail: str
