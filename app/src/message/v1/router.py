@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, Response
 
-from src import crud
 from src.database import database
 from src.sample_schemas import Params, BadRequest
 

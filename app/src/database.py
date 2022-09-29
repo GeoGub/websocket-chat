@@ -1,8 +1,9 @@
 import databases
 import sqlalchemy
 
-DATABASE_URL = "postgresql://postgres:root@127.0.0.1/websocket"
-database = databases.Database(DATABASE_URL)
+from src.config import get_settings
+
+database = databases.Database(get_settings().database_url)
 metadata = sqlalchemy.MetaData()
 
 

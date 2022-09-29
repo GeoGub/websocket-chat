@@ -10,3 +10,4 @@ user = Table(
     Column("username", String, unique=True),
     Column("password", String)
 )
+
