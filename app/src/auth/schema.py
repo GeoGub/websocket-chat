@@ -1,9 +1,11 @@
+from fastapi.param_functions import Form
+
 from src.sample_schemas import CamalModel
 
 
 class AuthInput(CamalModel):
-    username: str
-    password: str
+    username: str = Form()
+    password: str = Form()
 
 class RegistrationInput(AuthInput):
     pass
