@@ -12,6 +12,7 @@ class RegistrationInput(AuthInput):
 
 class Token(CamalModel):
     access_token: str
+    refresh_token: str
     token_type: str
 
 
