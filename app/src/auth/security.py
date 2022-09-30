@@ -9,7 +9,6 @@ from http import HTTPStatus
 from src.auth.schema import TokenData, Token, RegistrationInput
 from src.config import get_settings, Settings
 from src.database import database, blocklist
-from src.user.schema import UserSchema
 from src.crud.crud_user import crud_user
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -56,7 +55,6 @@ async def get_current_user(access_token: str = Cookie(alias="accessToken"),
     user = await crud_user.read_user_by_username(database, username=token_data.username)
     if user is None:
         raise credentials_exception
-    user = UserSchema(id=user.id, username=user.username).dict()
     return user
 
 

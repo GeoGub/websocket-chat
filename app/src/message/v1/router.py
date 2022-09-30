@@ -11,5 +11,5 @@ def get_messages():
     return
 
 @message_router.post('/')
-def post_message():
+def post_message(sel: int):
     return

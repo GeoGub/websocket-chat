@@ -8,6 +8,7 @@ from alembic import context
 from src.database import metadata
 from src.user.model import user
 from src.message.model import message
+from src.chat.model import chat
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

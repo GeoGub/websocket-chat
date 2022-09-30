@@ -1,6 +1,6 @@
-from src.sample_schemas import CamalModel, Meta
+from src.sample_schemas import CamelModel, Meta
 
-class UserBase(CamalModel):
+class UserBase(CamelModel):
     username: str
 
 class UserInput(UserBase):

@@ -9,7 +9,7 @@ def to_camel(string):
     return camel_case_string
 
 
-class CamalModel(BaseModel):
+class CamelModel(BaseModel):
 
     class Config:
         alias_generator = to_camel
@@ -22,5 +22,5 @@ class Params(BaseModel):
 class Meta(Params):
     total: int
 
-class BadRequest(CamalModel):
+class BadRequest(CamelModel):
     detail: str
