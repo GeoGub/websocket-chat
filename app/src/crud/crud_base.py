@@ -13,6 +13,10 @@ class CRUDBase:
 
     async def read(self, db: Database, params: Params):
         query = select(self.model).limit(params.limit).offset(params.limit*params.offset)
+        if params.dir == "asc":
+            query = query.order_by(self.model.c.id.asc())
+        else:
+            query = query.order_by(self.model.c.id.desc())
         users = await db.fetch_all(query)
         total = await db.execute(select(func.count()).select_from(self.model))
         return users, total

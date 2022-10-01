@@ -2,14 +2,23 @@ from fastapi import APIRouter, Depends, Response
 
 from src.database import database
 from src.sample_schemas import Params, BadRequest
+from src.auth.security import get_current_user
+from src.message.schema import MessageInput, MessageListSchema
+from src.user.schema import UserSchema
+from src.crud.crud_message import crud_message
 
 
 message_router = APIRouter(prefix='/messages')
 
-@message_router.get('/')
-def get_messages():
-    return
+@message_router.get('/', response_model=MessageListSchema)
+async def get_messages(params: Params = Depends()):
+    messages, total = await crud_message.read(database, params)
+    response = MessageListSchema(items=messages, total=total)
+    return response
 
 @message_router.post('/')
-def post_message(sel: int):
+async def post_message(message_input: MessageInput, 
+                 current_user: UserSchema = Depends(get_current_user)):
+    message_input.sender_id = current_user.id
+    response = await crud_message.create(database, message_input)
     return

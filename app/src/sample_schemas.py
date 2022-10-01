@@ -18,6 +18,7 @@ class CamelModel(BaseModel):
 class Params(BaseModel):
     limit: int = Query(50, ge=1, le=100, description="Limit items on page")
     offset: int = Query(0, ge=0, description="Page number")
+    dir: str = "desc"
 
 class Meta(Params):
     total: int
