@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Response, WebSocket
 
 from src.database import database
 from src.sample_schemas import Params, BadRequest
@@ -18,7 +18,8 @@ async def get_messages(params: Params = Depends()):
 
 @message_router.post('/')
 async def post_message(message_input: MessageInput, 
-                 current_user: UserSchema = Depends(get_current_user)):
+                       current_user: UserSchema = Depends(get_current_user)):
     message_input.sender_id = current_user.id
-    response = await crud_message.create(database, message_input)
+    message_input.message += "\n"
+    await crud_message.create(database, message_input)
     return
