@@ -4,11 +4,12 @@ from src.crud.crud_user import crud_user
 from src.database import database
 from src.sample_schemas import Params, BadRequest
 from src.user.schema import UserListSchema, UserInput, UserSchema
+from src.auth.security import get_current_user
 
 user_router = APIRouter(prefix='/users')
 
 @user_router.get('/', response_model=UserListSchema)
-async def get_users(params: Params = Depends()):
+async def get_users(params: Params = Depends(), current_user: UserSchema | None = Depends(get_current_user)):
     users, total = await crud_user.read(database, params)
     response = UserListSchema(items=users, total=total)
     return response

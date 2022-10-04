@@ -16,10 +16,13 @@ async def get_messages(params: Params = Depends()):
     response = MessageListSchema(items=messages, total=total)
     return response
 
-@message_router.post('/')
-async def post_message(message_input: MessageInput, 
+@message_router.post('/', status_code=201, responses={400: {"model": BadRequest}})
+async def post_message(message_input: MessageInput,
+                       response: Response,
                        current_user: UserSchema = Depends(get_current_user)):
+    if len(message_input.message.strip()) == 0:
+        response.status_code = 400
+        return response
     message_input.sender_id = current_user.id
-    message_input.message += "\n"
-    await crud_message.create(database, message_input)
-    return
+    response.status_code = await crud_message.create(database, message_input)
+    return response
