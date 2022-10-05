@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    </head>
+    <body>
+        <h1>WebSocket Chat</h1>
+        <form action="" onsubmit="sendMessage(event)">
+            <input type="text" id="messageText" autocomplete="off"/>
+            <button>Send</button>
+        </form>
+        <ul id='messages'>
+        </ul>
+        <script>
+            var ws = new WebSocket("ws://localhost:8000/websocket/ws");
+            function get_messages() {
+                let messages = axios.get('http://localhost:8000/messages?limit=5')
+                                .then(function(response) {
+                                    let list = document.querySelector('#messages');
+                                    for (const message of response.data.items) {
+                                        let item = document.createElement('li');
+                                        item.append(`${message.id}: ${message.message}`);
+                                        list.prepend(item);
+                                    }
+                                })
+            }
+            get_messages()
+            ws.onmessage = function(event) {
+                var messages = document.getElementById('messages')
+                var message = document.createElement('li')
+                var content = document.createTextNode(event.data)
+                message.appendChild(content)
+                messages.appendChild(message)
+            };
+            function sendMessage(event) {
+                var input = document.getElementById("messageText")
+                let msg = {
+                    message: input.value,
+                    senderId: 1,
+                }
+                ws.send(JSON.stringify(msg))
+                input.value = ''
+                event.preventDefault()
+            }
+        </script>
+    </body>
+</html>
