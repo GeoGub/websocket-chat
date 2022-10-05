@@ -1,13 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, Cookie
-from fastapi.security import OAuth2PasswordRequestForm
-
-from http import HTTPStatus
-from datetime import timedelta
+from fastapi import APIRouter, Depends, Response, Cookie
 
 from src.auth.schema import Token, AuthInput, RegistrationInput
 from src.user.schema import UserSchema
 from src.config import get_settings, Settings
-from src.auth.security import authenticate_user, create_access_token, get_current_user, logout_user, registartion_user
+from src.auth.security import (authenticate_user, create_access_token, 
+                               get_current_user, logout_user, registartion_user)
 
 auth_router = APIRouter(prefix="/auth")
 
@@ -29,8 +26,7 @@ async def registration(registartion_data: RegistrationInput, response: Response)
     return response
 
 @auth_router.get("/me", response_model=UserSchema)
-async def get_me(access_token: str = Cookie(alias="accessToken"),
-                 current_user: UserSchema = Depends(get_current_user)):
+async def get_me(current_user: UserSchema = Depends(get_current_user)):
     return current_user
 
 @auth_router.post("/logout")

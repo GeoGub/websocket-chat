@@ -1,11 +1,11 @@
-from fastapi.param_functions import Form
+from fastapi.security.base import SecurityBase
 
 from src.sample_schemas import CamelModel
 
 
 class AuthInput(CamelModel):
-    username: str = Form()
-    password: str = Form()
+    username: str
+    password: str
 
 class RegistrationInput(AuthInput):
     pass
