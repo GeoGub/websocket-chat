@@ -1,9 +1,13 @@
-from fastapi import APIRouter, WebSocket
+from fastapi import APIRouter, WebSocket, Depends
+
+import json
 
 from src.database import database
 from src.websocket.connection import connection_manager
 from src.message.schema import MessageInput
 from src.crud.crud_message import crud_message
+from src.user.schema import UserSchema
+from src.auth.security import get_current_user
 
 websocket_router = APIRouter(prefix="/websocket")
 
@@ -16,6 +20,6 @@ async def websocket_endpoint(websocket: WebSocket):
         except Exception as e:
            await connection_manager.disconnect(websocket)
            return None
-        message_input = MessageInput(message=message, sender_id=1)
-        await crud_message.create(database, message_input)
-        await connection_manager.broadcast(message_input)
+        message = MessageInput(**json.loads(message))
+        await crud_message.create(database, message)
+        await connection_manager.broadcast(message)

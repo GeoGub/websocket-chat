@@ -18,12 +18,10 @@
                 let messages = axios.get('http://localhost:8000/messages?limit=5')
                                 .then(function(response) {
                                     let list = document.querySelector('#messages');
-                                    console.log(list)
                                     for (const message of response.data.items) {
-                                        let item = document.createElement('li')
-                                        item.append(`${message.id}: ${message.message}`)
-                                        console.log(item)
-                                        list.prepend(item)
+                                        let item = document.createElement('li');
+                                        item.append(`${message.id}: ${message.message}`);
+                                        list.prepend(item);
                                     }
                                 })
             }
@@ -37,7 +35,11 @@
             };
             function sendMessage(event) {
                 var input = document.getElementById("messageText")
-                ws.send(input.value)
+                let msg = {
+                    message: input.value,
+                    senderId: 1,
+                }
+                ws.send(JSON.stringify(msg))
                 input.value = ''
                 event.preventDefault()
             }
