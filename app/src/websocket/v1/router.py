@@ -15,10 +15,9 @@ async def websocket_endpoint(websocket: WebSocket):
     await connection_manager.connection(websocket=websocket)
     while True:
         try:
-            message = await websocket.receive_text()
+            data = await websocket.receive_text()
         except Exception as e:
            await connection_manager.disconnect(websocket)
            return None
-        message = MessageInput(**json.loads(message))
-        await crud_message.create(database, message)
-        await connection_manager.broadcast(message)
+        _, data = await crud_message.create(database, MessageInput(**json.loads(data)))
+        await connection_manager.broadcast(data)
