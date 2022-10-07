@@ -70,7 +70,7 @@ async def authenticate_user(username: str, password: str) -> UserSchema:
 
 async def registartion_user(user_data: RegistrationInput) -> int:
     user_data.password = get_password_hash(user_data.password)
-    status_code = await crud_user.create(database, user_data)
+    status_code, _ = await crud_user.create(database, user_data)
     return status_code
 
 

@@ -27,5 +27,5 @@ async def post_message(message_input: MessageInput,
         response.status_code = 400
         return response
     message_input.sender_id = 1
-    response.status_code = await crud_message.create(database, message_input)
+    response.status_code, _ = await crud_message.create(database, message_input)
     return response
