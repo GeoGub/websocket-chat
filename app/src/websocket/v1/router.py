@@ -7,7 +7,6 @@ from src.websocket.connection import connection_manager
 from src.message.schema import MessageInput
 from src.crud.crud_message import crud_message
 from src.user.schema import UserSchema
-from src.auth.security import get_current_user
 
 websocket_router = APIRouter(prefix="/websocket")
 

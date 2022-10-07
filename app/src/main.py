@@ -14,7 +14,7 @@ app.include_router(message_router)
 app.include_router(websocket_router)
 
 origins = [
-    "*",
+    "http://localhost:5173",
 ]
 
 app.add_middleware(
