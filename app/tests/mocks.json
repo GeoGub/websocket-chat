@@ -1,0 +1,62 @@
+{
+  "auth": {
+    "register": {
+      "correct": {
+        "payload": {
+          "username": "usertest",
+          "password": "password"
+        },
+        "expected": {
+          "status_code": 201
+        }
+      },
+      "incorrect": {
+        "payload": {
+          "username": "usertest",
+          "password": "password"
+        },
+        "expected": {
+          "status_code": 400
+        }
+      }
+    },
+    "login": {
+      "correct": [
+        {
+          "payload": {
+            "username": "usertest",
+            "password": "password"
+          },
+          "expected": {
+            "status_code": 200
+          }
+        }
+      ],
+      "incorrect": [
+        {
+          "payload": {
+            "username": "wronglogin",
+            "password": "password"
+          },
+          "expected": {
+            "status_code": 401
+          }
+        },
+        {
+          "payload": {
+            "username": "usertest",
+            "password": "wrongpassword" 
+          },
+          "expected": {
+            "status_code": 401
+          }
+        }
+      ]
+    }
+  },
+  "message": {
+    "create_message": {
+      
+    }
+  }
+}
