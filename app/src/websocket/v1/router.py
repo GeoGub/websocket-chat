@@ -4,7 +4,7 @@ import json
 
 from src.database import database
 from src.websocket.connection import connection_manager
-from src.message.schema import MessageInput
+from src.message.schema import MessageInput, MessageSchema
 from src.crud.crud_message import crud_message
 from src.user.schema import UserSchema
 
@@ -20,4 +20,5 @@ async def websocket_endpoint(websocket: WebSocket):
            await connection_manager.disconnect(websocket)
            return None
         _, data = await crud_message.create(database, MessageInput(**json.loads(data)))
+        data = MessageSchema(sender=UserSchema(username=data.username, id=data.id_1), **{**data})
         await connection_manager.broadcast(data)

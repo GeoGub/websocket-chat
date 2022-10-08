@@ -10,7 +10,7 @@
         ></v-divider>
         <v-list-item
         >
-        <v-list-item-title v-text="message.senderId">
+        <v-list-item-title v-text="message.sender.username">
         </v-list-item-title>
         <v-list-item-subtitle v-text="message.message"></v-list-item-subtitle>
         </v-list-item>
@@ -48,6 +48,7 @@
       await axios.get('http://localhost:8000/messages')
         .then(res => {
           this.messages = res.data.items.reverse()
+          console.log(this.messages)
         })
         console.log(this.messages)
         this.ws.onmessage = this.onMessage

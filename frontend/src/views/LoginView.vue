@@ -57,10 +57,8 @@
 
 <script>
   import axios from 'axios'
-  // import { useCookies } from "vue3-cookies";
   export default {
     setup() {
-      // const { cookies } = useCookies();
     },
     data: () => ({
       show1: false,
@@ -71,6 +69,7 @@
     }),
     methods: {
       login() {
+        console.log(this.$store.state.count)
         axios.post('http://127.0.0.1:8000/auth/login', {
           username: this.username,
           password: this.password
