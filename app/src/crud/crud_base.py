@@ -38,7 +38,7 @@ class CRUDBase:
         return HTTPStatus.CREATED.value, item_id
 
     async def read_by_id(self, db: Database, id: int, join_model: Table | None = None):
-        query = select(self.model).join(join_model) if join_model is not None else select(self.model)
+        query = select(self.model) if join_model is None else select(self.model.join(join_model))
         query = query.where(self.model.c.id==id)
         item_by_id = await db.fetch_one(query)
         if not item_by_id:

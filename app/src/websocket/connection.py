@@ -13,7 +13,6 @@ class ConnectionManager:
         await websocket.accept()
 
     async def broadcast(self, message: MessageInput):
-        print(message)
         for connection in self.connections:
             await connection.send_text(json.dumps(message.dict(by_alias=True)))
     
