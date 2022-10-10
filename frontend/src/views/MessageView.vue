@@ -63,12 +63,14 @@
       onMessage(event) {
         console.log(event.data)
         this.messages.push(JSON.parse(event.data))
-        console.log(this.messages)
       },
       send_message() {
+        if (this.value.length < 3) {
+          return
+        }
         let data = {
           message: this.value,
-          senderId: 1
+          senderId: this.$store.state.user.id
         }
         this.ws.send(JSON.stringify(data))
         this.value = ''

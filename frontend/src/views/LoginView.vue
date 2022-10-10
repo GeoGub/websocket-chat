@@ -59,6 +59,9 @@
   import axios from 'axios'
   export default {
     setup() {
+      if (this.$store.state.user!==null) {
+        this.$router.push('/im')
+      }
     },
     data: () => ({
       show1: false,
@@ -69,16 +72,21 @@
     }),
     methods: {
       login() {
-        console.log(this.$store.state.count)
+        console.log(this.$store.state.user)
         axios.post('http://127.0.0.1:8000/auth/login', {
           username: this.username,
           password: this.password
-        }, {withCredentials: true}).then(response => {
-          console.log(response)
+        }, {withCredentials: true})
+        .then(response => {
+          this.get_me()
         })
       },
       get_me() {
-        axios.get('http://127.0.0.1:8000/auth/me', {withCredentials: true}).then(res => {console.log(res)})
+        axios.get('http://127.0.0.1:8000/auth/me', {withCredentials: true})
+        .then(res => {
+          this.$store.state.user = res.data
+          this.$router.push('/im')
+        })
       }
     },
   }
