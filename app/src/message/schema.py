@@ -13,6 +13,7 @@ class MessageInput(MessageBase):
 
 class MessageSchema(MessageBase):
     id: int
+    sender: UserSchema
 
 
 class MessageListSchema(Meta):

@@ -16,7 +16,7 @@ async def login(auth_data: AuthInput,
     access_token = await create_access_token(
         data={"sub": user.username}
     )
-    response.set_cookie("accessToken", access_token)
+    response.set_cookie("accessToken", access_token, samesite="none", secure=True)
     response.status_code = 200
     return response
 

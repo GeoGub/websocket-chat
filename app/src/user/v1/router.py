@@ -17,7 +17,7 @@ async def get_users(params: Params = Depends(), current_user: UserSchema | None 
 
 @user_router.post('/', status_code=201, responses={400: {"model": BadRequest}})
 async def post_user(user: UserInput, response: Response):
-    response.status_code = await crud_user.create(database, user)
+    response.status_code, _ = await crud_user.create(database, user)
     return response
 
 
