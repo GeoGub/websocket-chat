@@ -22,7 +22,7 @@ async def login(auth_data: AuthInput,
 
 @auth_router.post("/registration")
 async def registration(registartion_data: RegistrationInput, response: Response):
-    response.status_code = await registartion_user(registartion_data)
+    response.status_code = await registartion_user(registartion_data.dict())
     return response
 
 @auth_router.get("/me", response_model=UserSchema)
