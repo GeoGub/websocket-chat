@@ -10,5 +10,8 @@ class CRUDChat(CRUDBase):
         join_condition = None
         return await super().read(params, join_condition)
 
+    async def read_by_companion(self):
+        pass
+
 
 crud_chat = CRUDChat(chat)

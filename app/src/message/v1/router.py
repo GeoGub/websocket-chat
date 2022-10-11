@@ -18,6 +18,7 @@ async def get_messages(params: Params = Depends()):
     response = MessageListSchema(items=messages, total=total, **params.dict())
     return response
 
+
 @message_router.post('/', status_code=201, responses={400: {"model": BadRequest}})
 async def post_message(response: Response,
                        rel: int,

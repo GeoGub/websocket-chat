@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from fastapi import HTTPException
 from sqlalchemy import select, func, insert, delete, Table, Column
 from sqlalchemy.sql.selectable import Join
+from sqlalchemy.sql.elements import BinaryExpression
 
 from http import HTTPStatus
 
@@ -17,14 +18,16 @@ class CRUDBase:
         self.NOT_FOUND = HTTPException(status_code=HTTPStatus.NOT_FOUND.value, 
                                        detail=HTTPStatus.NOT_FOUND.phrase)
 
-    async def read(self, params: dict, join_model: Table | None = None, 
-                   join_condition: Join | None = None, query_condition: tuple | None = None):
+    async def read(self, 
+                   params: dict, 
+                   query_condition: tuple[BinaryExpression] = tuple(),
+                   join_model: Table | None = None, join_condition: Join | None = None):
         query = select(self.model) \
                 if join_condition is None else \
                 select(self.model, join_model).select_from(join_condition)
-        if query_condition is not None:
-            query = query.where(query_condition)
-        query = query.limit(params["limit"]).offset(params["limit"]*params["offset"])
+        query = query.where(*query_condition) \
+                     .limit(params["limit"]) \
+                     .offset(params["limit"]*params["offset"])
         query = query.order_by(self.model.c.id.asc()) \
                 if params["dir"] == "asc" else \
                 query.order_by(self.model.c.id.desc())
@@ -44,11 +47,14 @@ class CRUDBase:
             await transaction.commit()
         return HTTPStatus.CREATED.value, item_id
 
-    async def read_by_id(self, id: int, join_model: Table | None = None, join_condition: Join | None = None):
+    async def read_one_by_condition(self, 
+                                    query_condition: tuple[BinaryExpression] = tuple(), 
+                                    join_model: Table | None = None, 
+                                    join_condition: Join | None = None):
         query = select(self.model) \
-                if join_condition is None \
-                else select(self.model, join_model).select_from(join_condition)
-        query = query.where(self.model.c.id==id)
+                if join_condition is None else \
+                select(self.model, join_model).select_from(join_condition)
+        query = query.where(*query_condition)
         item_by_id = await db.fetch_one(query)
         if not item_by_id:
             raise self.NOT_FOUND
