@@ -1,11 +1,13 @@
 from databases import Database
 from pydantic import BaseModel
 from fastapi import HTTPException
-from sqlalchemy import select, func, insert, delete, Table
+from sqlalchemy import select, func, insert, delete, Table, Column
+from sqlalchemy.sql.selectable import Join
 
 from http import HTTPStatus
 
 from src.sample_schemas import Params
+from src.database import database as db
 
 class CRUDBase:
     def __init__(self, model) -> None:
@@ -15,18 +17,23 @@ class CRUDBase:
         self.NOT_FOUND = HTTPException(status_code=HTTPStatus.NOT_FOUND.value, 
                                        detail=HTTPStatus.NOT_FOUND.phrase)
 
-    async def read(self, db: Database, params: Params):
-        query = select(self.model).limit(params.limit).offset(params.limit*params.offset)
-        if params.dir == "asc":
-            query = query.order_by(self.model.c.id.asc())
-        else:
-            query = query.order_by(self.model.c.id.desc())
+    async def read(self, params: dict, join_model: Table | None = None, 
+                   join_condition: Join | None = None, query_condition: tuple | None = None):
+        query = select(self.model) \
+                if join_condition is None else \
+                select(self.model, join_model).select_from(join_condition)
+        if query_condition is not None:
+            query = query.where(query_condition)
+        query = query.limit(params["limit"]).offset(params["limit"]*params["offset"])
+        query = query.order_by(self.model.c.id.asc()) \
+                if params["dir"] == "asc" else \
+                query.order_by(self.model.c.id.desc())
         items = await db.fetch_all(query)
         total = await db.execute(select(func.count()).select_from(self.model))
         return items, total
 
-    async def create(self, db: Database, value: BaseModel):
-        query = insert(self.model, value.dict()).returning(self.model.c.id)
+    async def create(self, value: dict):
+        query = insert(self.model, value).returning(self.model.c.id)
         transaction = await db.transaction()
         try:
             item_id = await db.execute(query)
@@ -37,8 +44,10 @@ class CRUDBase:
             await transaction.commit()
         return HTTPStatus.CREATED.value, item_id
 
-    async def read_by_id(self, db: Database, id: int, join_model: Table | None = None):
-        query = select(self.model) if join_model is None else select(self.model.join(join_model))
+    async def read_by_id(self, id: int, join_model: Table | None = None, join_condition: Join | None = None):
+        query = select(self.model) \
+                if join_condition is None \
+                else select(self.model, join_model).select_from(join_condition)
         query = query.where(self.model.c.id==id)
         item_by_id = await db.fetch_one(query)
         if not item_by_id:
@@ -46,7 +55,7 @@ class CRUDBase:
         return item_by_id
 
     
-    async def delete(self, db: Database, id: int):
+    async def delete(self, id: int):
         query = delete(self.model).where(self.model.c.id==id).returning(self.model.c.id)
         item = await db.execute(query)
         if not item:

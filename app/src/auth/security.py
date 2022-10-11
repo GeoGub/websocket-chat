@@ -55,22 +55,22 @@ async def get_current_user(access_token: str | None = Cookie(alias="accessToken"
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = await crud_user.read_user_by_username(database, username=token_data.username)
+    user = await crud_user.read_user_by_username(token_data.username)
     if user is None:
         raise credentials_exception
     return user
 
 
 async def authenticate_user(username: str, password: str) -> UserSchema:
-    user = await crud_user.read_user_by_username(database, username)
+    user = await crud_user.read_user_by_username(username)
     if not user or not verify_password(password, user.password):
         raise credentials_exception
     return user
 
 
-async def registartion_user(user_data: RegistrationInput) -> int:
-    user_data.password = get_password_hash(user_data.password)
-    status_code, _ = await crud_user.create(database, user_data)
+async def registartion_user(user_data: dict) -> int:
+    user_data["password"] = get_password_hash(user_data["password"])
+    status_code, _ = await crud_user.create(user_data)
     return status_code
 
 
