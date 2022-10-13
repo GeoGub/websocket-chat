@@ -1,17 +1,17 @@
 from databases import Database
-from sqlalchemy import select
+from sqlalchemy import select, or_, tuple_
 
+from src.user.schema import UserSchema
 from .crud_base import CRUDBase
-from src.user.model import user
+from src.user.model import user, user_columns
 from src.database import database as db
 
 
-
 class CRUDUser(CRUDBase):
-    async def read_user_by_username(self, username: str):
-        query = select(self.model).where(self.model.c.username==username)
-        user_by_username = await db.fetch_one(query)
-        if user_by_username:
-            return user_by_username
+    
+    async def read_one_by_condition(self, **kwargs) -> UserSchema:
+        query_condition = tuple_(*tuple(user_columns[key] == kwargs[key] for key in kwargs.keys()))
+        return await super().read_one_by_condition(query_condition)
+
 
 crud_user = CRUDUser(user)

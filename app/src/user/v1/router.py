@@ -24,7 +24,7 @@ async def post_user(user: UserInput, response: Response):
 @user_router.get('/{id:int}', response_model=UserSchema, 
                               responses={404: {"model": BadRequest}})
 async def get_user(id:int):
-    response = await crud_user.read_by_id(id)
+    response = await crud_user.read_one_by_condition(id=id)
     return response
 
 

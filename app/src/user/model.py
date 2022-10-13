@@ -11,3 +11,10 @@ user = Table(
     Column("password", String),
     Column("email", String)
 )
+
+user_columns = {
+    "id": user.c.id,
+    "username": user.c.username,
+    "password": user.c.password,
+    "email": user.c.email,
+}

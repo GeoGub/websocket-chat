@@ -44,7 +44,7 @@ async def is_token_revoke(access_token: str | None = Cookie(alias="accessToken",
                     detail="Token is revoked")
 
 
-async def get_current_user(access_token: str | None = Cookie(alias="accessToken", default=None),
+async def get_current_user(access_token: str = Cookie(alias="accessToken"),
                            _: NoneType = Depends(is_token_revoke),
                            settings: Settings = Depends(get_settings)) -> UserSchema:
     try:
@@ -55,14 +55,14 @@ async def get_current_user(access_token: str | None = Cookie(alias="accessToken"
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = await crud_user.read_user_by_username(token_data.username)
+    user = await crud_user.read_one_by_condition(username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
 
 
 async def authenticate_user(username: str, password: str) -> UserSchema:
-    user = await crud_user.read_user_by_username(username)
+    user = await crud_user.read_one_by_condition(username=username)
     if not user or not verify_password(password, user.password):
         raise credentials_exception
     return user
