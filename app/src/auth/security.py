@@ -44,7 +44,7 @@ async def is_token_revoke(access_token: str | None = Cookie(alias="accessToken",
                     detail="Token is revoked")
 
 
-async def get_current_user(access_token: str = Cookie(alias="accessToken"),
+async def get_current_user(access_token: str | None = Cookie(None, alias="accessToken"),
                            _: NoneType = Depends(is_token_revoke),
                            settings: Settings = Depends(get_settings)) -> UserSchema:
     try:

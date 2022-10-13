@@ -9,9 +9,9 @@ from src.crud.crud_message import crud_message
 
 message_router = APIRouter(prefix='/messages')
 
-@message_router.get('/', response_model=MessageListSchema)
-async def get_messages(params: Params = Depends()):
-    messages, total = await crud_message.read(params.dict())
+@message_router.get('/{chat_id:int}', response_model=MessageListSchema)
+async def get_messages(chat_id: int, params: Params = Depends()):
+    messages, total = await crud_message.read(params.dict(), chat_id)
     messages = [MessageSchema(
         sender=UserSchema(username=message.username, id=message.id_1), **{**message}
     ) for message in messages]
