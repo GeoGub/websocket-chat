@@ -9,3 +9,11 @@ chat = Table(
     Column("user_iniciator_id", Integer, ForeignKey("users.id", onupdate="CASCADE", ondelete="CASCADE")),
     Column("user_id", Integer, ForeignKey("users.id", onupdate="CASCADE", ondelete="CASCADE"))
 )
+
+
+chat_columns = {
+    "id": chat.c.id,
+    "user_iniciator_id": chat.c.user_iniciator_id,
+    "user_id": chat.c.user_id,
+}
+
