@@ -22,7 +22,7 @@ async def get_chats(params: Params = Depends(),
     response = ChatListSchema(items=chats, total=total, **params.dict())
     return response
 
-@chat_router.get("/{user_id:int}>", response_model=ChatSchema)
+@chat_router.get("/{user_id:int}", response_model=ChatSchema)
 async def get_chat(user_id: int, current_user: UserSchema = Depends(get_current_user)):
     chat = await crud_chat.read_one_by_companion(current_user, user_id)
     chat = ChatSchema(
@@ -31,3 +31,7 @@ async def get_chat(user_id: int, current_user: UserSchema = Depends(get_current_
         **{**chat}
     )
     return chat
+
+@chat_router.post("/")
+async def post_chat():
+    pass
