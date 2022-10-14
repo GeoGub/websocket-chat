@@ -54,9 +54,7 @@
       ]
     }
   },
-  "message": {
-    "create_message": {
-      
-    }
+  "chat": {
+    
   }
 }

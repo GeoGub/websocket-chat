@@ -21,18 +21,18 @@ class CRUDBase:
     async def read(self, 
                    params: dict,
                    order: UnaryExpression,
+                   join_condition: Join | Table,
                    join_models: tuple[Table] = tuple(),
-                   join_condition: Join | tuple = tuple(),
                    query_condition: BinaryExpression | BooleanClauseList = or_(),
                    ) -> tuple[list, int]:
-        query = select(self.model, *join_models). \
-                    select_from(join_condition). \
-                    where(query_condition). \
-                    limit(params["limit"]). \
-                    offset(params["limit"]*params["offset"]). \
-                    order_by(order if order is not None else self.model.c.id.desc())
+        query = select(self.model, *join_models) \
+                    .select_from(join_condition) \
+                    .where(query_condition) \
+                    .limit(params["limit"]) \
+                    .offset(params["limit"]*params["offset"]) \
+                    .order_by(order)
         items = await db.fetch_all(query)
-        total = await db.execute(select(func.count()).select_from(self.model))
+        total = await db.execute(select(func.count()).select_from(self.model).where(query_condition))
         return items, total
 
     async def create(self, value: dict):
@@ -48,13 +48,13 @@ class CRUDBase:
         return HTTPStatus.CREATED.value, item_id
 
     async def read_one_by_condition(self, 
-                                    query_condition: Tuple[BinaryExpression] = Tuple(), 
-                                    join_model: Table | None = None, 
-                                    join_condition: Join | None = None):
-        query = select(self.model) \
-                if join_condition is None else \
-                select(self.model, join_model).select_from(join_condition)
-        query = query.where(*query_condition)
+                                    join_condition: Join | Table,
+                                    join_models: tuple[Table] = tuple(),
+                                    query_condition: Tuple[BinaryExpression] = Tuple()
+                                    ):
+        query = select(self.model, *join_models) \
+                    .select_from(join_condition) \
+                    .where(query_condition)
         item = await db.fetch_one(query)
         if not item:
             raise self.NOT_FOUND
